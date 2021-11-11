@@ -253,6 +253,7 @@ def crop_and_save_img(info, windows, window_anns, img_dir, no_padding,
 
         cv2.imwrite(osp.join(save_dir, patch_info['id']+img_ext), patch)
         patch_info['filename'] = patch_info['id'] + img_ext
+        print(patch_info)
         patch_infos.append(patch_info)
 
     return patch_infos
