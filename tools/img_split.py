@@ -229,8 +229,8 @@ def crop_and_save_img(info, windows, window_anns, img_dir, no_padding,
         x_start, y_start, x_stop, y_stop = window.tolist()
         patch_info['x_start'] = x_start
         patch_info['y_start'] = y_start
-        patch_info['id'] = info['id'] + f'_{i:04d}'
-        patch_info['ori_id'] = info['id']
+        patch_info['id'] = int(info['id']) + f'_{i:04d}'
+        patch_info['ori_id'] = int(info['id'])
 
         ann = window_anns[i]
         ann['bboxes'] = bt.translate(ann['bboxes'], -x_start, -y_start)
