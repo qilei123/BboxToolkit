@@ -56,6 +56,7 @@ def _parse_ann_info(img_info, ann_info):
                         height=img_info['height'], 
                         filename=img_info['file_name'], 
                         id=img_info['id']))
+    print(content)
     return content
 
 def load_annotations(ann_file,classes):
