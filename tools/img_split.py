@@ -15,6 +15,71 @@ from math import ceil
 from functools import partial, reduce
 from multiprocessing import Pool, Manager
 
+from pycocotools.coco import COCO
+
+def _parse_ann_info(img_info, ann_info):
+    gt_bboxes = []
+    gt_labels = []
+    gt_masks_ann = []
+    diffs = []
+    for i, ann in enumerate(ann_info):
+        if ann.get('ignore', False):
+            continue
+        x1, y1, w, h = ann['bbox']
+        inter_w = max(0, min(x1 + w, img_info['width']) - max(x1, 0))
+        inter_h = max(0, min(y1 + h, img_info['height']) - max(y1, 0))
+        if inter_w * inter_h == 0:
+            continue
+        if ann['area'] <= 0 or w < 1 or h < 1:
+            continue
+        bbox = [x1, y1, x1 + w, y1 + h]
+
+        gt_bboxes.append(bbox)
+        gt_labels.append(ann['category_id'])
+        gt_masks_ann.append(ann['segmentation'][0])
+        diffs.append(0)
+
+    gt_masks_ann = np.array(gt_masks_ann, dtype=np.float32) if gt_masks_ann else \
+            np.zeros((0, 8), dtype=np.float32)
+    gt_labels = np.array(gt_labels, dtype=np.int64) if gt_labels else \
+            np.zeros((0, ), dtype=np.int64)
+    diffs = np.array(diffs, dtype=np.int64) if diffs else \
+            np.zeros((0, ), dtype=np.int64)
+
+    ann = dict(
+        bboxes=gt_masks_ann,
+        labels=gt_labels,
+        diffs=diffs)
+
+    content = dict(ann=ann)
+    content.update(dict(width=img_info['width'], 
+                        height=img_info['height'], 
+                        filename=img_info['file_name'], 
+                        id=img_info['id']))
+    return content
+
+def load_annotations(ann_file,classes):
+    """Load annotation from COCO style annotation file.
+
+    Args:
+        ann_file (str): Path of annotation file.
+
+    Returns:
+        list[dict]: Annotation info from COCO api.
+    """
+
+    coco = COCO(ann_file)
+    img_ids = coco.get_img_ids()
+
+    contents = []
+    for i in img_ids:
+        info = coco.load_imgs([i])[0]
+        img_id = info['id']
+        ann_ids = coco.get_ann_ids(img_ids=[img_id])
+        ann_info = coco.load_anns(ann_ids)
+        content = _parse_ann_info(info,ann_info)
+        contents.append(content)
+    return contents,classes
 
 def add_parser(parser):
     #argument for processing
@@ -253,19 +318,29 @@ def main():
 
     print('Loading original data!!!')
     infos, img_dirs = [], []
-    load_func = getattr(bt.datasets, 'load_'+args.load_type)
-    for img_dir, ann_dir in zip(args.img_dirs, args.ann_dirs):
-        _infos, classes = load_func(
-            img_dir=img_dir,
-            ann_dir=ann_dir,
-            classes=args.classes,
-            nproc=args.nproc)
-        _img_dirs = [img_dir for _ in range(len(_infos))]
-        infos.extend(_infos)
-        img_dirs.extend(_img_dirs)
-    if args.prior_annfile is not None:
-        prior_infos, _ = bt.load_pkl(args.prior_annfile, classes=classes)
-        bt.merge_prior_contents(infos, prior_infos, merge_type=args.merge_type)
+    if 'coco' in args.load_type:
+        for img_dir, ann_dir in zip(args.img_dirs, args.ann_dirs):
+            _infos, classes = load_annotations(ann_dir,args.classes)
+            _img_dirs = [img_dir for _ in range(len(_infos))]
+            infos.extend(_infos)
+            img_dirs.extend(_img_dirs)
+        if args.prior_annfile is not None:
+            prior_infos, _ = bt.load_pkl(args.prior_annfile, classes=classes)
+            bt.merge_prior_contents(infos, prior_infos, merge_type=args.merge_type)        
+    else:
+        load_func = getattr(bt.datasets, 'load_'+args.load_type)
+        for img_dir, ann_dir in zip(args.img_dirs, args.ann_dirs):
+            _infos, classes = load_func(
+                img_dir=img_dir,
+                ann_dir=ann_dir,
+                classes=args.classes,
+                nproc=args.nproc)
+            _img_dirs = [img_dir for _ in range(len(_infos))]
+            infos.extend(_infos)
+            img_dirs.extend(_img_dirs)
+        if args.prior_annfile is not None:
+            prior_infos, _ = bt.load_pkl(args.prior_annfile, classes=classes)
+            bt.merge_prior_contents(infos, prior_infos, merge_type=args.merge_type)
 
     print('Start splitting images!!!')
     start = time.time()
