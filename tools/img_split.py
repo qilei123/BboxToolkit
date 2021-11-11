@@ -56,7 +56,6 @@ def _parse_ann_info(img_info, ann_info):
                         height=img_info['height'], 
                         filename=img_info['file_name'], 
                         id=img_info['id']))
-    print(content)
     return content
 
 def load_annotations(ann_file,classes):
@@ -213,6 +212,7 @@ def get_window_obj(info, windows, iof_thr):
                 win_ann[k] = [v[i] for i in pos_inds]
         win_ann['trunc'] = win_iofs[pos_inds] < 1
         window_anns.append(win_ann)
+        print(win_ann)
     return window_anns
 
 
