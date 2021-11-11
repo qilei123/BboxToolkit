@@ -4,7 +4,7 @@
     "img_dirs": [
         "data/td/images/"
     ],
-    "ann_dirs": ["data/td/annotations/test_AW.json"],
+    "ann_dirs": ["data/td/annotations/test_AW_obb.json"],
     "classes": ["Small 1-piece vehicle", "Large 1-piece vehicle", "Extra-large 2-piece truck"],
     "prior_annfile": null,
     "merge_type": "addition",
