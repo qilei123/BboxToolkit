@@ -152,8 +152,8 @@ def parse_args():
     assert args.save_ext in ['.png', '.jpg', 'bmp', '.tif']
     assert args.iof_thr >= 0 and args.iof_thr < 1
     assert args.iof_thr >= 0 and args.iof_thr <= 1
-    assert not osp.exists(args.save_dir), \
-            f'{osp.join(args.save_dir)} already exists'
+    if osp.exists(args.save_dir):
+            print(f'{osp.join(args.save_dir)} already exists')
     return args
 
 
