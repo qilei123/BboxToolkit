@@ -4,7 +4,7 @@
     "img_dirs": [
         "data/td/images/"
     ],
-    "ann_dirs": ["data/td/annotations/train_AW_obb.json"],
+    "ann_dirs": ["data/td/annotations/test_AW_obb.json"],
     "classes": ["Small 1-piece vehicle", "Large 1-piece vehicle", "Extra-large 2-piece truck"],
     "prior_annfile": null,
     "merge_type": "addition",
@@ -12,7 +12,7 @@
         640
     ],
     "gaps": [
-        200
+        320
     ],
     "rates": [
         1.0
@@ -23,6 +23,6 @@
     "padding_value": [
         104, 116, 124
     ],
-    "save_dir": "data/td/split_set_train/",
+    "save_dir": "data/td/split_set_test/",
     "save_ext": ".jpg"
 }
