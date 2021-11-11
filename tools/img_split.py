@@ -212,7 +212,6 @@ def get_window_obj(info, windows, iof_thr):
                 win_ann[k] = [v[i] for i in pos_inds]
         win_ann['trunc'] = win_iofs[pos_inds] < 1
         window_anns.append(win_ann)
-        print(win_ann)
     return window_anns
 
 
