@@ -2,14 +2,14 @@
     "nproc": 10,
     "load_type": "coco",
     "img_dirs": [
-        "data/DOTA1_0/test/images/"
+        "data/td/images/"
     ],
-    "ann_dirs": null,
-    "classes": null,
+    "ann_dirs": ["data/td/annotations/test_AW.json"],
+    "classes": ["Small 1-piece vehicle", "Large 1-piece vehicle", "Extra-large 2-piece truck"],
     "prior_annfile": null,
     "merge_type": "addition",
     "sizes": [
-        1024
+        640
     ],
     "gaps": [
         200
@@ -19,10 +19,10 @@
     ],
     "img_rate_thr": 0.6,
     "iof_thr": 0.7,
-    "no_padding": false,
+    "no_padding": true,
     "padding_value": [
         104, 116, 124
     ],
-    "save_dir": "data/split_ss_dota1_0/test/",
-    "save_ext": ".png"
+    "save_dir": "data/td/split_images/",
+    "save_ext": ".jpg"
 }
