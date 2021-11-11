@@ -43,21 +43,41 @@ def bbox_overlaps(bboxes1, bboxes2, mode='iou', is_aligned=False, eps=1e-6):
     else:
         polys1 = bbox2type(bboxes1, 'poly')
         polys2 = bbox2type(bboxes2, 'poly')
-        sg_polys1 = [shgeo.Polygon(p) for p in polys1.reshape(rows, -1, 2)]
-        sg_polys2 = [shgeo.Polygon(p) for p in polys2.reshape(cols, -1, 2)]
+        #sg_polys1 = [shgeo.Polygon(p) for p in polys1.reshape(rows, -1, 2)]
+        #sg_polys2 = [shgeo.Polygon(p) for p in polys2.reshape(cols, -1, 2)]
+
+        sg_polys1 = []
+        for p in polys1.reshape(rows, -1, 2):
+            pl = shgeo.Polygon(p)
+            pl.buffer(0)
+            #if pl.is_valid:
+            sg_polys1.append(pl)
+        sg_polys2 = []
+        for p in polys2.reshape(cols, -1, 2):
+            pl = shgeo.Polygon(p)
+            pl.buffer(0)
+            #if pl.is_valid:
+            sg_polys2.append(pl)
 
         overlaps = np.zeros(h_overlaps.shape)
         for p in zip(*np.nonzero(h_overlaps)):
-            overlaps[p] = sg_polys1[p[0]].intersection(sg_polys2[p[-1]]).area
+            try:
+                overlaps[p] = sg_polys1[p[0]].intersection(sg_polys2[p[-1]]).area
+            except:
+                overlaps[p] = 0
 
         if mode == 'iou':
             unions = np.zeros(h_overlaps.shape, dtype=np.float32)
             for p in zip(*np.nonzero(h_overlaps)):
-                unions[p] = sg_polys1[p[0]].union(sg_polys2[p[-1]]).area
+                try:
+                    unions[p] = sg_polys1[p[0]].union(sg_polys2[p[-1]]).area
+                except:
+                    unions[p] = 10
         else:
             unions = np.array([p.area for p in sg_polys1], dtype=np.float32)
             if not is_aligned:
                 unions = unions[..., None]
+
 
     unions = np.clip(unions, eps, np.inf)
     outputs = overlaps / unions
