@@ -23,6 +23,6 @@
     "padding_value": [
         104, 116, 124
     ],
-    "save_dir": "data/td/split_images/",
+    "save_dir": "data/td/split_set/",
     "save_ext": ".jpg"
 }
