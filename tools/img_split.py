@@ -35,7 +35,7 @@ def _parse_ann_info(img_info, ann_info):
         bbox = [x1, y1, x1 + w, y1 + h]
 
         gt_bboxes.append(bbox)
-        gt_labels.append(ann['category_id'])
+        gt_labels.append(int(ann['category_id'])-1)
         gt_masks_ann.append(ann['segmentation'][0])
         diffs.append(0)
 
