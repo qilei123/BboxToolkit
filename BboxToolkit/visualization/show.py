@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 from .colors import colors_val, random_colors
 from .draw import draw_hbb, draw_obb, draw_poly
 from ..utils import choice_by_type
-
+import gc
 EPS = 1e-2
 
 
@@ -114,5 +114,5 @@ def imshow_bboxes(img,
     plt.close(fig)
     plt.close('all')
     plt.clf() 
-    
+    gc.collect()
     return drawed_img
