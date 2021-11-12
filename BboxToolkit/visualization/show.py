@@ -111,8 +111,8 @@ def imshow_bboxes(img,
             plt.pause(wait_time)
     if out_file is not None:
         cv2.imwrite(out_file, drawed_img)
-
+    plt.close(fig)
     plt.close('all')
     plt.clf() 
-    plt.close(fig)
+    
     return drawed_img
