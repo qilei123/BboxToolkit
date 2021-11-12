@@ -114,5 +114,5 @@ def imshow_bboxes(img,
 
     plt.close('all')
     plt.clf() 
-    plt.close()
+    plt.close(fig)
     return drawed_img
