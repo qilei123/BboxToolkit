@@ -6,7 +6,7 @@ setup(name='BboxToolkit',
       author='jbwang1997',
       packages=find_packages(),
       install_requires=[
-          'matplotlib>=3.4',
+          'matplotlib>=3.2',
           'opencv-python',
           'terminaltables',
           'pillow',
